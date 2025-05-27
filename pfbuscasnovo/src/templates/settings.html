@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PFBuscas - Configurações</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root {
+            --primary-color: {{ current_user.primary_color }};
+            --secondary-color: {{ current_user.secondary_color }};
+        }
+        
+        body {
+            background-color: {{ 'var(--bs-light)' if current_user.theme == 'light' else 'var(--bs-dark)' }};
+            color: {{ 'var(--bs-dark)' if current_user.theme == 'light' else 'var(--bs-light)' }};
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background-color: var(--primary-color);
+        }
+        
+        .sidebar {
+            background-color: {{ 'var(--bs-white)' if current_user.theme == 'light' else '#2c3e50' }};
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding-top: 20px;
+        }
+        
+        .sidebar .nav-link {
+            color: {{ 'var(--bs-dark)' if current_user.theme == 'light' else 'var(--bs-light)' }};
+            padding: 10px 20px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .card {
+            background-color: {{ 'var(--bs-white)' if current_user.theme == 'light' else '#2c3e50' }};
+            color: {{ 'var(--bs-dark)' if current_user.theme == 'light' else 'var(--bs-light)' }};
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            padding: 15px 20px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .logo-img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: middle;
+            border: 2px solid #ddd;
+        }
+        
+        .theme-option {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .theme-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .theme-light {
+            background-color: #f8f9fa;
+            color: #343a40;
+            border: 2px solid #dee2e6;
+        }
+        
+        .theme-dark {
+            background-color: #343a40;
+            color: #f8f9fa;
+            border: 2px solid #495057;
+        }
+        
+        .theme-option.active {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}">
+                <img src="{{ url_for('static', filename='img/pfbuscas_logo.png') }}" alt="PFBuscas Logo" class="logo-img">
+                PFBuscas
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i> {{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('settings') }}"><i class="fas fa-cog"></i> Configurações</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('dashboard') }}">
+                                <i class="fas fa-search"></i> Consulta CPF
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('history') }}">
+                                <i class="fas fa-history"></i> Histórico
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ url_for('settings') }}">
+                                <i class="fas fa-palette"></i> Personalização
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show mt-3">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-palette"></i> Personalização do Tema</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('settings') }}">
+                            <div class="mb-4">
+                                <h5>Escolha o Tema</h5>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="theme-option theme-light {{ 'active' if current_user.theme == 'light' else '' }}">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="theme" id="themeLight" value="light" {{ 'checked' if current_user.theme == 'light' else '' }}>
+                                                <label class="form-check-label" for="themeLight">
+                                                    <i class="fas fa-sun"></i> Tema Claro
+                                                </label>
+                                            </div>
+                                            <p class="mt-2 mb-0">Interface clara com fundo branco e texto escuro.</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="theme-option theme-dark {{ 'active' if current_user.theme == 'dark' else '' }}">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="theme" id="themeDark" value="dark" {{ 'checked' if current_user.theme == 'dark' else '' }}>
+                                                <label class="form-check-label" for="themeDark">
+                                                    <i class="fas fa-moon"></i> Tema Escuro
+                                                </label>
+                                            </div>
+                                            <p class="mt-2 mb-0">Interface escura com fundo preto e texto claro.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="mb-4">
+                                <h5>Cores Personalizadas</h5>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="primaryColor" class="form-label">Cor Primária</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <span class="color-preview" id="primaryColorPreview" style="background-color: {{ current_user.primary_color }};"></span>
+                                                </span>
+                                                <input type="color" class="form-control form-control-color" id="primaryColor" name="primary_color" value="{{ current_user.primary_color }}">
+                                                <input type="text" class="form-control" id="primaryColorText" value="{{ current_user.primary_color }}">
+                                            </div>
+                                            <small class="form-text text-muted">Cor principal para cabeçalhos e botões.</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="secondaryColor" class="form-label">Cor Secundária</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">
+                                                    <span class="color-preview" id="secondaryColorPreview" style="background-color: {{ current_user.secondary_color }};"></span>
+                                                </span>
+                                                <input type="color" class="form-control form-control-color" id="secondaryColor" name="secondary_color" value="{{ current_user.secondary_color }}">
+                                                <input type="text" class="form-control" id="secondaryColorText" value="{{ current_user.secondary_color }}">
+                                            </div>
+                                            <small class="form-text text-muted">Cor secundária para botões e destaques.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-4">
+                                    <h6>Temas Pré-definidos</h6>
+                                    <div class="d-flex flex-wrap gap-2 mt-2">
+                                        <button type="button" class="btn btn-sm" style="background-color: #007bff; color: white;" onclick="setColors('#007bff', '#6c757d')">Azul</button>
+                                        <button type="button" class="btn btn-sm" style="background-color: #28a745; color: white;" onclick="setColors('#28a745', '#6c757d')">Verde</button>
+                                        <button type="button" class="btn btn-sm" style="background-color: #dc3545; color: white;" onclick="setColors('#dc3545', '#6c757d')">Vermelho</button>
+                                        <button type="button" class="btn btn-sm" style="background-color: #fd7e14; color: white;" onclick="setColors('#fd7e14', '#6c757d')">Laranja</button>
+                                        <button type="button" class="btn btn-sm" style="background-color: #6f42c1; color: white;" onclick="setColors('#6f42c1', '#6c757d')">Roxo</button>
+                                        <button type="button" class="btn btn-sm" style="background-color: #20c997; color: white;" onclick="setColors('#20c997', '#6c757d')">Turquesa</button>
+                                        <button type="button" class="btn btn-sm" style="background-color: #17a2b8; color: white;" onclick="setColors('#17a2b8', '#6c757d')">Ciano</button>
+                                        <button type="button" class="btn btn-sm" style="background-color: #343a40; color: white;" onclick="setColors('#343a40', '#6c757d')">Preto</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Salvar Configurações
+                                </button>
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary ms-2">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-eye"></i> Pré-visualização</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="preview-container p-3 border rounded" id="previewContainer">
+                            <h4 id="previewHeader" style="color: {{ current_user.primary_color }};">Título de Exemplo</h4>
+                            <p>Este é um exemplo de como o texto ficará com as cores selecionadas.</p>
+                            <button class="btn" id="previewPrimaryBtn" style="background-color: {{ current_user.primary_color }}; color: white;">Botão Primário</button>
+                            <button class="btn" id="previewSecondaryBtn" style="background-color: {{ current_user.secondary_color }}; color: white;">Botão Secundário</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const primaryColor = document.getElementById('primaryColor');
+            const secondaryColor = document.getElementById('secondaryColor');
+            const primaryColorText = document.getElementById('primaryColorText');
+            const secondaryColorText = document.getElementById('secondaryColorText');
+            const primaryColorPreview = document.getElementById('primaryColorPreview');
+            const secondaryColorPreview = document.getElementById('secondaryColorPreview');
+            const previewHeader = document.getElementById('previewHeader');
+            const previewPrimaryBtn = document.getElementById('previewPrimaryBtn');
+            const previewSecondaryBtn = document.getElementById('previewSecondaryBtn');
+            const themeOptions = document.querySelectorAll('.theme-option');
+            
+            // Atualizar texto quando a cor mudar
+            primaryColor.addEventListener('input', function() {
+                primaryColorText.value = this.value;
+                primaryColorPreview.style.backgroundColor = this.value;
+                previewHeader.style.color = this.value;
+                previewPrimaryBtn.style.backgroundColor = this.value;
+            });
+            
+            secondaryColor.addEventListener('input', function() {
+                secondaryColorText.value = this.value;
+                secondaryColorPreview.style.backgroundColor = this.value;
+                previewSecondaryBtn.style.backgroundColor = this.value;
+            });
+            
+            // Atualizar color picker quando o texto mudar
+            primaryColorText.addEventListener('input', function() {
+                primaryColor.value = this.value;
+                primaryColorPreview.style.backgroundColor = this.value;
+                previewHeader.style.color = this.value;
+                previewPrimaryBtn.style.backgroundColor = this.value;
+            });
+            
+            secondaryColorText.addEventListener('input', function() {
+                secondaryColor.value = this.value;
+                secondaryColorPreview.style.backgroundColor = this.value;
+                previewSecondaryBtn.style.backgroundColor = this.value;
+            });
+            
+            // Destacar opção de tema selecionada
+            themeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    
+                    themeOptions.forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    
+                    this.classList.add('active');
+                });
+            });
+        });
+        
+        // Função para definir cores pré-definidas
+        function setColors(primary, secondary) {
+            document.getElementById('primaryColor').value = primary;
+            document.getElementById('secondaryColor').value = secondary;
+            document.getElementById('primaryColorText').value = primary;
+            document.getElementById('secondaryColorText').value = secondary;
+            document.getElementById('primaryColorPreview').style.backgroundColor = primary;
+            document.getElementById('secondaryColorPreview').style.backgroundColor = secondary;
+            document.getElementById('previewHeader').style.color = primary;
+            document.getElementById('previewPrimaryBtn').style.backgroundColor = primary;
+            document.getElementById('previewSecondaryBtn').style.backgroundColor = secondary;
+        }
+    </script>
+</body>
+</html>
